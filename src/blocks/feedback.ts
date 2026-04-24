@@ -7,13 +7,13 @@ import { Palette } from './enums';
 export const feedbackBlocks = [
   {
     type: 'laboneq_match',
-    message0: 'match  handle %1  play_after %2',
-    args0: [
-      { type: 'field_input', name: 'HANDLE', text: 'qubit_state' },
-      { type: 'field_variable', name: 'AFTER', variable: '' },
-    ],
-    message1: 'cases %1',
-    args1: [{ type: 'input_statement', name: 'CASES', check: 'Case' }],
+    message0: 'match',
+    message1: 'handle %1',
+    args1: [{ type: 'field_input', name: 'HANDLE', text: 'qubit_state' }],
+    message2: 'play_after (optional) %1',
+    args2: [{ type: 'field_variable', name: 'AFTER', variable: '' }],
+    message3: 'cases %1',
+    args3: [{ type: 'input_statement', name: 'CASES', check: 'Case' }],
     previousStatement: null,
     nextStatement: null,
     colour: Palette.feedback,

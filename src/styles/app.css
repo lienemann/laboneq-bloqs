@@ -101,9 +101,27 @@ body {
 
 .panels {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns:
+    minmax(120px, var(--split-left, 1fr))
+    6px
+    minmax(120px, var(--split-right, 1fr));
   min-height: 0;
   border-top: 1px solid var(--border);
+}
+
+.splitter {
+  background: var(--border);
+  cursor: col-resize;
+  transition: background 120ms;
+  user-select: none;
+  touch-action: none;
+}
+
+.splitter:hover,
+.splitter.dragging,
+.splitter:focus-visible {
+  background: var(--accent);
+  outline: none;
 }
 
 .panel {
@@ -187,16 +205,28 @@ body {
   font-family: var(--font-mono);
 }
 
-/* Responsive: stack panels on narrow screens */
+/* Responsive: stack panels on narrow screens; splitter becomes a horizontal bar */
 @media (max-width: 820px) {
   .panels {
     grid-template-columns: 1fr;
-    grid-template-rows: 1fr 1fr;
+    grid-template-rows:
+      minmax(120px, var(--split-top, 1fr))
+      6px
+      minmax(120px, var(--split-bottom, 1fr));
   }
   .panel-blocks {
     border-right: none;
     border-bottom: 1px solid var(--border);
   }
+  .splitter {
+    cursor: row-resize;
+  }
+}
+
+/* Tune the "this will snap here" highlight so valid drop targets are obvious. */
+.blocklyHighlightedConnectionPath {
+  stroke: #22c55e !important;
+  stroke-width: 4px !important;
 }
 
 /* Prism Tomorrow-ish theme (bundled locally, tuned to our palette) */

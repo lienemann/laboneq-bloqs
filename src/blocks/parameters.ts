@@ -7,9 +7,11 @@ import { ArithOpOptions, Palette } from './enums';
 export const parameterBlocks = [
   {
     type: 'laboneq_sweep_parameter',
-    message0: 'SweepParameter  name %1  values (py expr) %2',
-    args0: [
-      { type: 'field_variable', name: 'VAR', variable: 'values_param' },
+    message0: 'SweepParameter',
+    message1: 'name %1',
+    args1: [{ type: 'field_variable', name: 'VAR', variable: 'values_param' }],
+    message2: 'values (py expr) %1',
+    args2: [
       {
         type: 'field_input',
         name: 'VALUES',
@@ -23,12 +25,16 @@ export const parameterBlocks = [
   },
   {
     type: 'laboneq_linear_sweep_parameter',
-    message0:
-      'LinearSweepParameter  name %1  start %2  stop %3  count %4',
-    args0: [
-      { type: 'field_variable', name: 'VAR', variable: 'linear_param' },
+    message0: 'LinearSweepParameter',
+    message1: 'name %1',
+    args1: [{ type: 'field_variable', name: 'VAR', variable: 'linear_param' }],
+    message2: 'start %1 stop %2',
+    args2: [
       { type: 'field_scientific', name: 'START', text: '0.0' },
       { type: 'field_scientific', name: 'STOP', text: '1.0' },
+    ],
+    message3: 'count %1',
+    args3: [
       { type: 'field_number', name: 'COUNT', value: 21, min: 2, precision: 1 },
     ],
     output: 'Parameter',
@@ -37,20 +43,18 @@ export const parameterBlocks = [
   },
   {
     type: 'laboneq_param_arith',
-    message0: 'derive  name %1  op %2  a %3  b %4',
-    args0: [
-      { type: 'field_variable', name: 'VAR', variable: 'derived_param' },
-      { type: 'field_dropdown', name: 'OP', options: ArithOpOptions },
-      {
-        type: 'input_value',
-        name: 'A',
-        check: ['Number', 'Parameter'],
-      },
-      {
-        type: 'input_value',
-        name: 'B',
-        check: ['Number', 'Parameter'],
-      },
+    message0: 'derive',
+    message1: 'name %1',
+    args1: [{ type: 'field_variable', name: 'VAR', variable: 'derived_param' }],
+    message2: 'op %1',
+    args2: [{ type: 'field_dropdown', name: 'OP', options: ArithOpOptions }],
+    message3: 'a %1',
+    args3: [
+      { type: 'input_value', name: 'A', check: ['Number', 'Parameter'] },
+    ],
+    message4: 'b (ignored for np.sin/cos/sqrt/exp) %1',
+    args4: [
+      { type: 'input_value', name: 'B', check: ['Number', 'Parameter'] },
     ],
     output: 'Parameter',
     colour: Palette.parameters,

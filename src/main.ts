@@ -1,14 +1,17 @@
 import * as Blockly from 'blockly/core';
-// Import default blocks (Math, Variables, etc.) and the default messages so
-// the built-in categories and the UI chrome are populated.
+// Import default blocks (Math, Variables, etc.) and register the English
+// locale so built-in message keys (e.g. MATH_ADDITION_SYMBOL, the context
+// menu labels, the variable prompt) resolve to real strings instead of
+// raw `BKY_...` placeholders.
 import 'blockly/blocks';
-import 'blockly/msg/en';
+import * as En from 'blockly/msg/en';
+Blockly.setLocale(En as unknown as { [key: string]: string });
 
 import { registerBlocks, toolbox } from './blocks';
 import { generate } from './codegen/python';
 import { highlightInto } from './ui/highlight';
 import { loadFromLocal, saveToLocal } from './ui/persistence';
-import { wireToolbar } from './ui/layout';
+import { wireSplitter, wireToolbar } from './ui/layout';
 import './styles/app.css';
 
 registerBlocks();
@@ -25,8 +28,8 @@ const darkTheme = Blockly.Theme.defineTheme('bloqs-dark', {
     flyoutForegroundColour: '#e5e7eb',
     flyoutOpacity: 0.95,
     scrollbarColour: '#374151',
-    insertionMarkerColour: '#60a5fa',
-    insertionMarkerOpacity: 0.3,
+    insertionMarkerColour: '#22c55e',
+    insertionMarkerOpacity: 0.7,
     markerColour: '#60a5fa',
     cursorColour: '#60a5fa',
   },
@@ -55,7 +58,7 @@ const workspace = Blockly.inject(blocklyDiv, {
   zoom: { controls: true, wheel: true, startScale: 0.9, maxScale: 2, minScale: 0.3 },
   trashcan: true,
   move: { scrollbars: true, drag: true, wheel: false },
-  renderer: 'zelos',
+  renderer: 'geras',
 });
 
 // Restore any prior session. If none, seed with a minimal Experiment block
@@ -112,6 +115,21 @@ wireToolbar({
   getCode: () => lastCode,
   setStatus,
 });
+
+// Wire up the draggable splitter between the block panel and the code panel.
+// Every time it resizes, re-lay out Blockly so the workspace fills the new
+// width/height.
+wireSplitter(() => Blockly.svgResize(workspace));
+
+// We rely on Blockly's built-in feedback for drop validity:
+//   - Valid target connections are highlighted green (see CSS styling of
+//     `.blocklyHighlightedConnectionPath`).
+//   - An invalid drop causes the block to snap back to its origin, which is
+//     obvious on its own.
+// (Earlier versions added a pointermove + BLOCK_DRAG listener to tint the
+// dragged block red on invalid hover, but that interfered with Blockly's
+// gesture dispatch on dropdown fields and caused blocks to stick to the
+// mouse when a dropdown was clicked.)
 
 // Resize Blockly on window resize.
 window.addEventListener('resize', () => Blockly.svgResize(workspace));
