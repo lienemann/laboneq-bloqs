@@ -1,0 +1,26 @@
+{
+  "name": "laboneq-bloqs",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Privacy-preserving, installable PWA for visually composing LabOneQ (Zurich Instruments) experiments with a Blockly-based block editor.",
+  "license": "Apache-2.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "icons": "node scripts/icons.mjs"
+  },
+  "dependencies": {
+    "blockly": "^11.1.1",
+    "prismjs": "^1.29.0"
+  },
+  "devDependencies": {
+    "@types/prismjs": "^1.26.4",
+    "sharp": "^0.33.5",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.8",
+    "vite-plugin-pwa": "^0.20.5"
+  }
+}
