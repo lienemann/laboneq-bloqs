@@ -18,7 +18,7 @@ export const calibrationBlocks = [
   {
     type: 'laboneq_signal_calibration',
     message0: 'SignalCalibration  signal %1',
-    args0: [{ type: 'field_input', name: 'SIGNAL', text: 'q0_drive' }],
+    args0: [{ type: 'field_signal', name: 'SIGNAL', value: 'q0_drive' }],
     message1:
       'oscillator %1  local_oscillator_freq %2  amplitude %3',
     args1: [

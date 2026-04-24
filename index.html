@@ -29,8 +29,16 @@
           <button type="button" id="btn-clear" title="Clear workspace">Clear</button>
         </div>
       </header>
-      <main class="panels">
+      <main class="panels" id="panels">
         <section id="blockly-panel" class="panel panel-blocks" aria-label="Block editor"></section>
+        <div
+          id="splitter"
+          class="splitter"
+          role="separator"
+          aria-orientation="vertical"
+          aria-label="Resize panels"
+          tabindex="0"
+        ></div>
         <section class="panel panel-code" aria-label="Generated Python code">
           <div class="code-header">
             <span>experiment.py</span>

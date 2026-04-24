@@ -1,4 +1,5 @@
 import * as Blockly from 'blockly/core';
+import { registerFields } from './fields';
 import { structureBlocks } from './structure';
 import { feedbackBlocks } from './feedback';
 import { pulseBlocks } from './pulses';
@@ -11,6 +12,9 @@ let registered = false;
 export function registerBlocks(): void {
   if (registered) return;
   registered = true;
+  // Custom fields must be registered before any block JSON that references
+  // them (field_scientific, field_signal).
+  registerFields();
   const all = [
     ...structureBlocks,
     ...feedbackBlocks,

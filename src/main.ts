@@ -1,14 +1,17 @@
 import * as Blockly from 'blockly/core';
-// Import default blocks (Math, Variables, etc.) and the default messages so
-// the built-in categories and the UI chrome are populated.
+// Import default blocks (Math, Variables, etc.) and register the English
+// locale so built-in message keys (e.g. MATH_ADDITION_SYMBOL, the context
+// menu labels, the variable prompt) resolve to real strings instead of
+// raw `BKY_...` placeholders.
 import 'blockly/blocks';
-import 'blockly/msg/en';
+import * as En from 'blockly/msg/en';
+Blockly.setLocale(En as unknown as { [key: string]: string });
 
 import { registerBlocks, toolbox } from './blocks';
 import { generate } from './codegen/python';
 import { highlightInto } from './ui/highlight';
 import { loadFromLocal, saveToLocal } from './ui/persistence';
-import { wireToolbar } from './ui/layout';
+import { wireSplitter, wireToolbar } from './ui/layout';
 import './styles/app.css';
 
 registerBlocks();
@@ -25,8 +28,8 @@ const darkTheme = Blockly.Theme.defineTheme('bloqs-dark', {
     flyoutForegroundColour: '#e5e7eb',
     flyoutOpacity: 0.95,
     scrollbarColour: '#374151',
-    insertionMarkerColour: '#60a5fa',
-    insertionMarkerOpacity: 0.3,
+    insertionMarkerColour: '#22c55e',
+    insertionMarkerOpacity: 0.7,
     markerColour: '#60a5fa',
     cursorColour: '#60a5fa',
   },
@@ -55,7 +58,7 @@ const workspace = Blockly.inject(blocklyDiv, {
   zoom: { controls: true, wheel: true, startScale: 0.9, maxScale: 2, minScale: 0.3 },
   trashcan: true,
   move: { scrollbars: true, drag: true, wheel: false },
-  renderer: 'zelos',
+  renderer: 'geras',
 });
 
 // Restore any prior session. If none, seed with a minimal Experiment block
@@ -111,6 +114,49 @@ wireToolbar({
   workspace,
   getCode: () => lastCode,
   setStatus,
+});
+
+// Wire up the draggable splitter between the block panel and the code panel.
+// Every time it resizes, re-lay out Blockly so the workspace fills the new
+// width/height.
+wireSplitter(() => Blockly.svgResize(workspace));
+
+// Drag-state visual feedback. Blockly paints valid target connections with
+// `.blocklyHighlightedConnectionPath` (styled green via CSS). While a block
+// that needs a connection (has a previousStatement or output) is being
+// dragged but no valid connection is highlighted, we add `bloqs-drag-invalid`
+// to the injection div so CSS can tint the dragged block red.
+let isDragging = false;
+let dragNeedsConnection = false;
+workspace.addChangeListener((evt) => {
+  if (evt.type !== Blockly.Events.BLOCK_DRAG) return;
+  const dragEvt = evt as Blockly.Events.BlockDrag;
+  const injectionDiv = blocklyDiv.querySelector<HTMLElement>('.injectionDiv');
+  if (!injectionDiv) return;
+  if (dragEvt.isStart) {
+    const block = workspace.getBlockById(dragEvt.blockId!);
+    dragNeedsConnection =
+      !!block?.previousConnection || !!block?.outputConnection;
+    isDragging = true;
+    injectionDiv.classList.add('bloqs-dragging');
+  } else {
+    isDragging = false;
+    dragNeedsConnection = false;
+    injectionDiv.classList.remove('bloqs-dragging', 'bloqs-drag-invalid');
+  }
+});
+
+blocklyDiv.addEventListener('pointermove', () => {
+  if (!isDragging || !dragNeedsConnection) return;
+  const injectionDiv = blocklyDiv.querySelector<HTMLElement>('.injectionDiv');
+  if (!injectionDiv) return;
+  // Defer one frame so Blockly's highlight-path update is visible in the DOM.
+  requestAnimationFrame(() => {
+    const hasHighlight = !!blocklyDiv.querySelector(
+      '.blocklyHighlightedConnectionPath',
+    );
+    injectionDiv.classList.toggle('bloqs-drag-invalid', !hasHighlight);
+  });
 });
 
 // Resize Blockly on window resize.
