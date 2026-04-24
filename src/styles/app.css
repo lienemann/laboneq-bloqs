@@ -223,18 +223,7 @@ body {
   }
 }
 
-/* Drag-state visual feedback. When the user is dragging a block that needs
-   a connection but there is no valid target nearby, tint the dragged group
-   red. The `.bloqs-drag-invalid` class is added by main.ts. */
-.injectionDiv.bloqs-drag-invalid .blocklyDragging > .blocklyPath {
-  stroke: #ef4444 !important;
-  stroke-width: 3px !important;
-}
-.injectionDiv.bloqs-drag-invalid .blocklyDragging {
-  filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.6));
-}
-
-/* Tune the "this will snap here" highlight so valid targets are obvious. */
+/* Tune the "this will snap here" highlight so valid drop targets are obvious. */
 .blocklyHighlightedConnectionPath {
   stroke: #22c55e !important;
   stroke-width: 4px !important;

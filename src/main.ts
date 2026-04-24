@@ -121,43 +121,15 @@ wireToolbar({
 // width/height.
 wireSplitter(() => Blockly.svgResize(workspace));
 
-// Drag-state visual feedback. Blockly paints valid target connections with
-// `.blocklyHighlightedConnectionPath` (styled green via CSS). While a block
-// that needs a connection (has a previousStatement or output) is being
-// dragged but no valid connection is highlighted, we add `bloqs-drag-invalid`
-// to the injection div so CSS can tint the dragged block red.
-let isDragging = false;
-let dragNeedsConnection = false;
-workspace.addChangeListener((evt) => {
-  if (evt.type !== Blockly.Events.BLOCK_DRAG) return;
-  const dragEvt = evt as Blockly.Events.BlockDrag;
-  const injectionDiv = blocklyDiv.querySelector<HTMLElement>('.injectionDiv');
-  if (!injectionDiv) return;
-  if (dragEvt.isStart) {
-    const block = workspace.getBlockById(dragEvt.blockId!);
-    dragNeedsConnection =
-      !!block?.previousConnection || !!block?.outputConnection;
-    isDragging = true;
-    injectionDiv.classList.add('bloqs-dragging');
-  } else {
-    isDragging = false;
-    dragNeedsConnection = false;
-    injectionDiv.classList.remove('bloqs-dragging', 'bloqs-drag-invalid');
-  }
-});
-
-blocklyDiv.addEventListener('pointermove', () => {
-  if (!isDragging || !dragNeedsConnection) return;
-  const injectionDiv = blocklyDiv.querySelector<HTMLElement>('.injectionDiv');
-  if (!injectionDiv) return;
-  // Defer one frame so Blockly's highlight-path update is visible in the DOM.
-  requestAnimationFrame(() => {
-    const hasHighlight = !!blocklyDiv.querySelector(
-      '.blocklyHighlightedConnectionPath',
-    );
-    injectionDiv.classList.toggle('bloqs-drag-invalid', !hasHighlight);
-  });
-});
+// We rely on Blockly's built-in feedback for drop validity:
+//   - Valid target connections are highlighted green (see CSS styling of
+//     `.blocklyHighlightedConnectionPath`).
+//   - An invalid drop causes the block to snap back to its origin, which is
+//     obvious on its own.
+// (Earlier versions added a pointermove + BLOCK_DRAG listener to tint the
+// dragged block red on invalid hover, but that interfered with Blockly's
+// gesture dispatch on dropdown fields and caused blocks to stick to the
+// mouse when a dropdown was clicked.)
 
 // Resize Blockly on window resize.
 window.addEventListener('resize', () => Blockly.svgResize(workspace));
