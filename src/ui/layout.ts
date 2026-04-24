@@ -1,4 +1,5 @@
 import * as Blockly from 'blockly/core';
+import { loadDemoWorkspace } from './demo';
 import { exportJson, importJson } from './persistence';
 
 function getEl<T extends HTMLElement>(id: string): T {
@@ -160,6 +161,25 @@ export function wireToolbar({ getCode, workspace, setStatus }: ToolbarDeps): voi
       setStatus('import failed', 'err');
     } finally {
       fileInput.value = '';
+    }
+  });
+
+  getEl<HTMLButtonElement>('btn-demo').addEventListener('click', () => {
+    const hasContent = workspace.getTopBlocks(false).length > 0;
+    if (
+      hasContent &&
+      !confirm(
+        'Loading the demo will replace your current workspace. Continue?',
+      )
+    ) {
+      return;
+    }
+    try {
+      loadDemoWorkspace(workspace as Blockly.WorkspaceSvg);
+      setStatus('demo loaded', 'ok');
+    } catch (err) {
+      console.error('[bloqs] demo load failed:', err);
+      setStatus('demo load failed — check console', 'err');
     }
   });
 
