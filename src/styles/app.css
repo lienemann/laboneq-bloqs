@@ -287,7 +287,8 @@ pre[class*="language-"] {
   color: #fca5a5;
 }
 
-/* Blockly tuning to sit on our dark surface */
-.injectionDiv {
-  font-family: var(--font-sans);
-}
+/* Blockly tuning:
+   Do NOT set font-family on .injectionDiv — that would override what the
+   Blockly theme sets on its measurement canvas and cause label/field
+   overlap (the canvas sees one font, SVG renders in another). Let
+   fontStyle in src/main.ts be the single source of truth. */

@@ -33,8 +33,13 @@ const darkTheme = Blockly.Theme.defineTheme('bloqs-dark', {
     markerColour: '#60a5fa',
     cursorColour: '#60a5fa',
   },
+  // IMPORTANT: this must be a concrete font stack, NOT a CSS variable.
+  // Blockly measures text widths via canvas 2D `ctx.font`, which cannot
+  // parse `var(--...)` and silently falls back to a narrower default; the
+  // rendered SVG text then overflows into adjacent fields.
   fontStyle: {
-    family: 'var(--font-sans), sans-serif',
+    family:
+      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif',
     weight: 'normal',
     size: 12,
   },
